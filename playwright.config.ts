@@ -19,6 +19,8 @@ export default defineConfig({
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    // Change default 'data-testid' to custom attribute name 'data-test'
+    testIdAttribute: 'data-test',
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'https://www.saucedemo.com',
 
