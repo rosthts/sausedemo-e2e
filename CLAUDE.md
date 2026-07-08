@@ -54,9 +54,13 @@ tests/
 
 **Fixtures — DONE.** `tests/fixtures/index.ts` — кастомний `test` через `base.extend<{loginPage: LoginPage}>`, fixture сам створює `LoginPage` і викликає `open()`. `BasePage` має `get currentPage()` — публічний доступ до `page` для assertions, без розкриття внутрішнього стану сторінки. Тести імпортують `test`/`expect` з `../fixtures`, ручного `new LoginPage(page)` і дублювання `open()` більше нема.
 
+**InventoryPage — DONE.** `src/pages/inventoryPage.ts`, `sortOptions.ts` (union type `SortOption` замість рядкових літералів), fixture `inventoryPage` в `tests/fixtures/index.ts` (логінить `standard_user` і віддає готову `InventoryPage`). Тести сортування по ціні й імені — обидва зелені, санітарно перевірені (тимчасове прибирання `sortBy()` валило тест, значить перевірка не фейкова).
+
+**Важливий урок з рев'ю:** `Array.prototype.sort()` мутує масив на місці — `actualPrices.sort(...)` робить `actualPrices` тим самим масивом, що й `expectedPrices` (той самий reference), тест стає false-positive і завжди зелений. Завжди `[...array].sort(...)` при порівнянні "було vs очікується".
+
 ## Наступні кроки
 
-1. `InventoryPage` (page object) + базові тести: сортування, додавання в кошик — наступне
-2. Cart/checkout flow
+1. Додавання товару в кошик з inventory (лічильник на іконці кошика, `cart.html`) — наступне
+2. Checkout flow
 3. Тоді знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user`
 4. Далі — API-шар і зріліша звітність/CI
