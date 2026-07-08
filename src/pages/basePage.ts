@@ -5,4 +5,8 @@ export abstract class BasePage {
     }
 
     abstract open(): Promise<void>;
+
+    get currentPage() {
+        return this.page;
+    }
 }
