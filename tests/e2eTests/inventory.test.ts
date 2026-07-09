@@ -1,6 +1,5 @@
 import { ItemNotFoundError } from "../../src/errors/itemNotFoundError";
 import { SortOptions } from "../../src/utils/sortOptions";
-import { usersCredentials } from "../../src/utils/usersCredentials";
 import { expect, test } from "../fixtures";
 
 test.describe('Inventory', () => {

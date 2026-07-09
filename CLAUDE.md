@@ -74,8 +74,10 @@ tests/
 
 **Інфраструктурний блок повністю закритий** (PageManager, Config, error-класи). Повертаємось до функціоналу.
 
+**CartPage — DONE.** `src/pages/cartPage.ts` (`getCartItemNames`, `removeItemByName` з `ItemNotFoundError`, `goToCheckout`), геттер `pages.cartPage` в `PageManager`. `InventoryPage.goToCartPage()` тільки клікає на іконку кошика, не створює page object сам — навігаційні методи не повертають інші page objects, єдине джерело — `PageManager` (свідоме архітектурне рішення після обговорення fluent-стилю vs централізованого доступу). **Урок з рев'ю:** нейминг-помилка (`Card` замість `Cart`) розповзлася на 5+ файлів, перш ніж її виправили — перевіряти нейминг одразу після створення нового класу/файлу, не відкладати.
+
 ## Наступні кроки
 
-1. `CartPage` + `CheckoutPage` — наступне, вже на новій інфраструктурі (`PageManager.loginAs`, error-класи де доречно)
+1. `CheckoutPage` — наступне (форма даних покупця, підтвердження замовлення)
 2. Тоді знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user`
 3. Пізніше: API-клієнт, Allure, CI matrix/sharding
