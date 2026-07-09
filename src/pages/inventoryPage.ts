@@ -1,6 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { SortOption, SortOptions } from "../utils/sortOptions";
+import { ItemNotFoundError } from "../errors/itemNotFoundError";
 
 export class InventoryPage extends BasePage {
 
@@ -40,12 +41,15 @@ export class InventoryPage extends BasePage {
 
     async addToCartByItemName(itemName: string) {
         const item = this.inventoryItem.filter({ hasText: itemName });
+        if ((await item.count()) === 0) {
+            throw new ItemNotFoundError(`Item with name ${itemName} not found`);
+        }
         await item.getByRole('button', { name: 'Add to cart' }).click();
     }
 
     async getShoppingCartBadgeText(): Promise<string> {
         const text = await this.shoppingCartBadge.innerText();
-        return text;
+        return text.trim();
     }
 
 }

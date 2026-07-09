@@ -1,4 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
+import 'dotenv/config';
+import { config } from './src/config/config';
 
 const isCI = !!process.env.CI;
 
@@ -13,7 +15,7 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['list'], ['html', { open: 'never' }]],
   /* Cap each test while keeping enough time for external site latency. */
-  timeout: 30_000,
+  timeout: config.timeout,
   expect: {
     timeout: 7_000,
   },
@@ -22,7 +24,7 @@ export default defineConfig({
     // Change default 'data-testid' to custom attribute name 'data-test'
     testIdAttribute: 'data-test',
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'https://www.saucedemo.com',
+    baseURL: config.baseURL,
 
     /* Keep failure artifacts lightweight locally and focused in CI. */
     trace: isCI ? 'on-first-retry' : 'retain-on-failure',

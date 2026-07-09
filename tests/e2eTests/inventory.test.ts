@@ -1,3 +1,4 @@
+import { ItemNotFoundError } from "../../src/errors/itemNotFoundError";
 import { SortOptions } from "../../src/utils/sortOptions";
 import { usersCredentials } from "../../src/utils/usersCredentials";
 import { expect, test } from "../fixtures";
@@ -31,6 +32,12 @@ test.describe('Inventory', () => {
             const actualText = await pages.inventoryPage.getShoppingCartBadgeText();
             expect(actualText, 'Shopping cart badge text should be 2').toEqual('2');
         });
+    });
+
+    test('should throw ItemNotFoundError for non-existent item', async ({ pages }) => {
+        await pages.loginAs('standardUser');
+        await expect(pages.inventoryPage.addToCartByItemName('Non Existent Item'))
+            .rejects.toThrow(ItemNotFoundError);
     });
 
 });

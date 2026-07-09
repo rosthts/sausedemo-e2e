@@ -68,9 +68,14 @@ tests/
 
 **Урок з рев'ю, що повторився двічі:** якщо метод викликає `async` методи і сам має бути "дочекайним" — він має бути `async` і використовувати `await` всередині. Без цього `await` зовні — самообман (перший раз це зловили в геттері `loginPage` з `open()`, другий раз — у першій версії `loginAs` без `async`/`await`). Playwright's auto-waiting на locators маскує цю помилку (тести все ще проходять), що робить її небезпечною — не видно, поки не стане флейково.
 
+**Config-клас — DONE.** `src/config/config.ts` — `baseURL`/`timeout` з `process.env`, фолбек на дефолти. `dotenv/config` імпортується на початку `playwright.config.ts`. `.env.example` документує `BASE_URL`/`TIMEOUT` (узгоджено з реальними назвами env-змінних у `config.ts` — була розсинхронізація, виправлено). `.env` вже був у `.gitignore`. **Урок з рев'ю:** Playwright транспілює TS через esbuild без типоперевірки — звернення до неіснуючого поля об'єкта (`config.baseUrl` замість `config.baseURL`) тихо стає `undefined` замість помилки компіляції; такі баги ловляться лише запуском тестів, не читанням коду.
+
+**Error-класи — DONE.** `src/errors/appError.ts` (базовий `AppError extends Error`, встановлює `this.name`), `src/errors/itemNotFoundError.ts` (`ItemNotFoundError extends AppError`). Використовується в `InventoryPage.addToCartByItemName` — перевіряє `(await item.count()) === 0` **перед** кліком і кидає `ItemNotFoundError` замість дефолтного 30-секундного Playwright timeout. Тест перевіряє через `expect(promise).rejects.toThrow(ItemNotFoundError)` — падає за ~2с, не за 30с.
+
+**Інфраструктурний блок повністю закритий** (PageManager, Config, error-класи). Повертаємось до функціоналу.
+
 ## Наступні кроки
 
-1. **Config-клас** — інкапсуляція env/baseURL/timeouts — наступне
-2. **Власні error-класи** для доменних ситуацій (наприклад коли очікувана помилка логіну не з'явилась)
-3. Далі повертаємось до `CartPage`/`CheckoutPage`, вже на новій інфраструктурі
-4. Пізніше: API-клієнт, Allure, CI matrix/sharding
+1. `CartPage` + `CheckoutPage` — наступне, вже на новій інфраструктурі (`PageManager.loginAs`, error-класи де доречно)
+2. Тоді знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user`
+3. Пізніше: API-клієнт, Allure, CI matrix/sharding
