@@ -16,6 +16,19 @@ test.describe('Inventory', () => {
         expect(actualNames, 'Names should be sorted in ascending order').toEqual(expectedNames);
     });
 
+    test('should add item to cart', async ({ inventoryPage }) => {
+        await test.step('Add item to cart', async () => {
+            await inventoryPage.addToCartByItemName('Sauce Labs Backpack');
+            const actualText = await inventoryPage.getShoppingCartBadgeText();
+            expect(actualText, 'Shopping cart badge text should be 1').toEqual('1');
+        });
+        await test.step('Verify shopping cart badge text', async () => {
+            await inventoryPage.addToCartByItemName('Sauce Labs Bolt T-Shirt');
+            const actualText = await inventoryPage.getShoppingCartBadgeText();
+            expect(actualText, 'Shopping cart badge text should be 2').toEqual('2');
+        });
+    });
+
 });
 
    

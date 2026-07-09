@@ -4,17 +4,19 @@ import { SortOption, SortOptions } from "../utils/sortOptions";
 
 export class InventoryPage extends BasePage {
 
-    public readonly inventoryList: Locator;
+    public readonly inventoryItem: Locator;
     public readonly inventoryDropdown: Locator;
     public readonly inventoryItemName: Locator;
     public readonly inventoryItemPrice: Locator;
+    public readonly shoppingCartBadge: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.inventoryList = page.getByTestId('inventory-list');
+        this.inventoryItem = page.getByTestId('inventory-item');
         this.inventoryDropdown = page.getByTestId('product-sort-container');
         this.inventoryItemName = page.getByTestId('inventory-item-name');
         this.inventoryItemPrice = page.getByTestId('inventory-item-price');
+        this.shoppingCartBadge = page.getByTestId('shopping-cart-badge');
     }
 
     async open() {
@@ -35,4 +37,15 @@ export class InventoryPage extends BasePage {
             Number(price.replace('$', '').trim())
         );
     }
+
+    async addToCartByItemName(itemName: string) {
+        const item = this.inventoryItem.filter({ hasText: itemName });
+        await item.getByRole('button', { name: 'Add to cart' }).click();
+    }
+
+    async getShoppingCartBadgeText(): Promise<string> {
+        const text = await this.shoppingCartBadge.innerText();
+        return text;
+    }
+
 }
