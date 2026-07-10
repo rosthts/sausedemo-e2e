@@ -76,8 +76,12 @@ tests/
 
 **CartPage — DONE.** `src/pages/cartPage.ts` (`getCartItemNames`, `removeItemByName` з `ItemNotFoundError`, `goToCheckout`), геттер `pages.cartPage` в `PageManager`. `InventoryPage.goToCartPage()` тільки клікає на іконку кошика, не створює page object сам — навігаційні методи не повертають інші page objects, єдине джерело — `PageManager` (свідоме архітектурне рішення після обговорення fluent-стилю vs централізованого доступу). **Урок з рев'ю:** нейминг-помилка (`Card` замість `Cart`) розповзлася на 5+ файлів, перш ніж її виправили — перевіряти нейминг одразу після створення нового класу/файлу, не відкладати.
 
+**Практика компонентів (composition):** користувач хотів практики з класами — вирішили розділити на: (а) компонент `CartBadge` (повторюваний фрагмент UI на кількох сторінках) і (б) `CheckoutPage` з композицією двох кроків (форма → summary, не повторювані фрагменти, а різні сторінки одного flow).
+
+**Крок 1: `CartBadge` — DONE.** `src/components/cartBadge.ts` — не наслідує `BasePage` (це не сторінка), інкапсулює `shoppingCartBadge`+`shoppingCartLink`, методи `getShoppingCartBadgeText()`+`goToCartPage()`. Композиційно підключений у `InventoryPage` (`public readonly cartBadge: CartBadge`). **Урок з рев'ю:** була рекурсія — клас `CartBadge` в своєму ж конструкторі створював `new CartBadge(page)` (copy-paste помилка при спробі зробити композицію не в тому файлі) → `RangeError: Maximum call stack size exceeded`. Головна навичка з цього — вміти читати стек-трейс: коли один й той самий фрейм (`CartBadge` конструктор) повторюється сотні разів підряд — це рекурсія, шукай самовикликання. `CartPage` свідомо **не** отримав `cartBadge` (YAGNI — нема тесту, що цього потребує).
+
 ## Наступні кроки
 
-1. `CheckoutPage` — наступне (форма даних покупця, підтвердження замовлення)
+1. **Крок 2: `CheckoutPage`** з композицією двох кроків (форма даних покупця → summary/overview) — наступне
 2. Тоді знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user`
 3. Пізніше: API-клієнт, Allure, CI matrix/sharding

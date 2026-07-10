@@ -1,8 +1,8 @@
 import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
-import { SortOption, SortOptions } from "../utils/sortOptions";
+import { SortOption } from "../utils/sortOptions";
 import { ItemNotFoundError } from "../errors/itemNotFoundError";
-import { CartPage } from "./cartPage";
+import { CartBadge } from "../components/cartBadge";
 
 export class InventoryPage extends BasePage {
 
@@ -10,8 +10,8 @@ export class InventoryPage extends BasePage {
     public readonly inventoryDropdown: Locator;
     public readonly inventoryItemName: Locator;
     public readonly inventoryItemPrice: Locator;
-    public readonly shoppingCartBadge: Locator;
-    public readonly shoppingCartLink: Locator;
+    public readonly cartBadge: CartBadge
+
 
     constructor(page: Page) {
         super(page);
@@ -19,8 +19,7 @@ export class InventoryPage extends BasePage {
         this.inventoryDropdown = page.getByTestId('product-sort-container');
         this.inventoryItemName = page.getByTestId('inventory-item-name');
         this.inventoryItemPrice = page.getByTestId('inventory-item-price');
-        this.shoppingCartBadge = page.getByTestId('shopping-cart-badge');
-        this.shoppingCartLink = page.getByTestId('shopping-cart-link');
+        this.cartBadge = new CartBadge(page);
     }
 
     async open() {
@@ -49,14 +48,4 @@ export class InventoryPage extends BasePage {
         }
         await item.getByRole('button', { name: 'Add to cart' }).click();
     }
-
-    async getShoppingCartBadgeText(): Promise<string> {
-        const text = await this.shoppingCartBadge.innerText();
-        return text.trim();
-    }
-
-    async goToCartPage() {
-        await this.shoppingCartLink.click();
-    }
-
 }

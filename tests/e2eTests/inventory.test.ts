@@ -23,12 +23,12 @@ test.describe('Inventory', () => {
         await pages.loginAs('standardUser');
         await test.step('Add item to cart', async () => {
             await pages.inventoryPage.addToCartByItemName('Sauce Labs Backpack');
-            const actualText = await pages.inventoryPage.getShoppingCartBadgeText();
+            const actualText = await pages.inventoryPage.cartBadge.getShoppingCartBadgeText();
             expect(actualText, 'Shopping cart badge text should be 1').toEqual('1');
         });
         await test.step('Verify shopping cart badge text', async () => {
             await pages.inventoryPage.addToCartByItemName('Sauce Labs Bolt T-Shirt');
-            const actualText = await pages.inventoryPage.getShoppingCartBadgeText();
+            const actualText = await pages.inventoryPage.cartBadge.getShoppingCartBadgeText();
             expect(actualText, 'Shopping cart badge text should be 2').toEqual('2');
         });
     });
