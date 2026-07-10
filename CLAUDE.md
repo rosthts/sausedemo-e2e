@@ -80,8 +80,13 @@ tests/
 
 **Крок 1: `CartBadge` — DONE.** `src/components/cartBadge.ts` — не наслідує `BasePage` (це не сторінка), інкапсулює `shoppingCartBadge`+`shoppingCartLink`, методи `getShoppingCartBadgeText()`+`goToCartPage()`. Композиційно підключений у `InventoryPage` (`public readonly cartBadge: CartBadge`). **Урок з рев'ю:** була рекурсія — клас `CartBadge` в своєму ж конструкторі створював `new CartBadge(page)` (copy-paste помилка при спробі зробити композицію не в тому файлі) → `RangeError: Maximum call stack size exceeded`. Головна навичка з цього — вміти читати стек-трейс: коли один й той самий фрейм (`CartBadge` конструктор) повторюється сотні разів підряд — це рекурсія, шукай самовикликання. `CartPage` свідомо **не** отримав `cartBadge` (YAGNI — нема тесту, що цього потребує).
 
+**Крок 2: `CheckoutPage` — DONE.** `src/components/checkoutInfoStep.ts` (форма: firstName/lastName/postalCode/Continue/Cancel), `src/components/checkoutOverviewStep.ts` (Finish/Cancel/totalPrice), `src/pages/checkoutPage.ts` — композиційно володіє обома кроками (`public readonly checkoutInfoStep`/`checkoutOverviewStep`), сама не тримає локаторів форми/summary. Геттер `checkoutPage` в `PageManager`. Повний checkout flow тест зелений (login → add to cart → cart → checkout info → overview → "Thank you").
+
+**Урок з рев'ю (важливий, повторювана тема):** page objects не повинні містити `expect()`/assertions — тільки дії й повернення стану (локатора чи значення). Assertion-логіка лишається в тесті. Також: коли перевіряєш видимість/стан елемента в тесті, використовуй web-first `await expect(locator).toBeVisible()` (сам чекає й ретраїть), а не `.isVisible()` + `toBeTruthy()` (миттєвий знімок без очікування, ризик флейку) — той самий принцип, що й `toHaveURL()` vs `page.url()` раніше.
+
+**Композиційна практика (CartBadge, CheckoutInfoStep/OverviewStep) — DONE.** Інфраструктурний блок і практика з класами повністю закриті.
+
 ## Наступні кроки
 
-1. **Крок 2: `CheckoutPage`** з композицією двох кроків (форма даних покупця → summary/overview) — наступне
-2. Тоді знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user`
-3. Пізніше: API-клієнт, Allure, CI matrix/sharding
+1. Тепер знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user` — тести на поведінку після успішного логіну (не login-тести)
+2. Пізніше: API-клієнт, Allure, CI matrix/sharding
