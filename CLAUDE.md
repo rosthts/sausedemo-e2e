@@ -86,7 +86,17 @@ tests/
 
 **Композиційна практика (CartBadge, CheckoutInfoStep/OverviewStep) — DONE.** Інфраструктурний блок і практика з класами повністю закриті.
 
+**Зміна напрямку (2026-07-10):** користувач попросив API-шар перед поверненням до special-user тестів. **Важливо:** saucedemo.com — статичний SPA без реального backend API, тому вирішили не робити network mocking (це вже покрито в `front/`), а підняти окремий шар з реальним стороннім public API (**reqres.in**) — для практики побудови API-клієнта, схем відповідей, окремого `project` без браузера. Це не про сам saucedemo, а про API-testing навички в тому ж репозиторії/фреймворку.
+
+**Playwright project 'api' — DONE.** `playwright.config.ts`: `chromium` project отримав `testIgnore: ['**/apiTests/**']`, новий `api` project з `testDir: './tests/apiTests'`, `baseURL: 'https://reqres.in/'`, без `devices` (без браузера). Перевірено: `--project=api --list` і `--project=chromium --list` не змішують тести.
+
+**Зміна API-сервісу (2026-07-11):** `reqres.in` виявився незручним (обов'язкова реєстрація, `x-api-key` header, заплутана документація). Перейшли на **dummyjson.com** — не потребує ключа для GET, має реальний login/auth flow (JWT) і products/carts/users, тематично ближче до e-commerce (як і сам saucedemo). `REQRES_API_KEY` в `.env`/`.env.example`/`config.ts` — прибрати, більше не потрібен.
+
+**В процесі:** `src/api/usersApiClient.ts` вже мав каркас під reqres (`getUserById` без типів) — переробити під dummyjson (`GET https://dummyjson.com/users/{id}`, форма відповіді пласка, без обгортки `data` — `{ id, firstName, lastName, email, ... }`, багато полів).
+
+**API-шар — DONE.** `src/api/usersApiClient.ts` (dummyjson.com, `getUserById({id})` — навмисно named-param об'єкт для читабельності викликів, повністю типізований `API.GetUserResponse` у `src/api/types.ts`, детальна структура user). `src/apiManager.ts` — **користувач сам, без підказки**, застосував lazy-getter паттерн з `PageManager` до нового шару (гарне перенесення навички). Fixture `api: ApiManager` в `tests/fixtures/index.ts`. `playwright.config.ts` — `api` project без `REQRES_API_KEY`/`extraHTTPHeaders` (dummyjson не потребує ключа для GET). 14/14 тестів зелені (13 UI + 1 API).
+
 ## Наступні кроки
 
-1. Тепер знадобляться `problem_user`, `performance_glitch_user`, `error_user`, `visual_user` — тести на поведінку після успішного логіну (не login-тести)
-2. Пізніше: API-клієнт, Allure, CI matrix/sharding
+1. Тести на `problem_user`, `performance_glitch_user`, `error_user`, `visual_user` — наступне (поведінка після успішного логіну: зламані картинки, повільне завантаження, баги в кошику/чекауті, візуальні відмінності — НЕ login-тести)
+2. Пізніше: Allure, CI matrix/sharding

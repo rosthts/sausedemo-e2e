@@ -35,7 +35,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: ['**/apiTests/**'],
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'api',
+      testDir: './tests/apiTests',
+      use: {
+          baseURL: 'https://dummyjson.com'
+      },
+  }
+  
   ]
 });
